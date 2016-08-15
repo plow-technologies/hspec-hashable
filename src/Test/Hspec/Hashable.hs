@@ -1,6 +1,17 @@
+{-|
+Module      : Test.Hspec.Hashable
+Description : Hashable testing functions
+Copyright   : (c) Plow Technologies, 2016
+License     : BSD3
+Maintainer  : mchaver@gmail.com
+Stability   : Beta
+-}
+
 {-# LANGUAGE ScopedTypeVariables #-}
 
 module Test.Hspec.Hashable (
+  -- * Introduction
+  -- $introduction
 
   -- * Main functions
   -- $main
@@ -24,19 +35,6 @@ import Data.Typeable
 import Test.Hspec
 import Test.QuickCheck
 
-
--- | For every 'Hashable' instance of a type, each unique value of that type
--- should have a unique hash. Generally, a 'Generic' 'Hashable' instance of a type should
--- create a unique hash, and ideally these match the rules of type's 'Eq'
--- instance. Any values for that type that are equal should have the same hash
--- and any values that are not equal should have unique hashes.
--- There might still be cases where a 'Generic' 'Hashable' instance
--- breaks those expectations. There are also cases where you might implement
--- 'Hashable' by hand. This testing library assumes that you expect the
--- uniqueness of a type matches in `Eq` and `Hashable`.
-
-
-
 -- $main
 
 -- | the main testing function, give it a sampleSize larger than zero (or it will fail) and it
@@ -53,6 +51,9 @@ testHashableUniqueness sampleSize proxy = do
   where
     typeName = show . typeRep $ proxy
 
+-- | same as 'testHashableUniqueness' but it does not require an instance
+-- of typeable and you should pass the type name as a string so it appears
+-- in the error message.
 testHashableUniquenessWithoutTypeable :: forall a. (Arbitrary a, Eq a, Hashable a, Show a)
   => Int -> String -> Proxy a -> Spec
 testHashableUniquenessWithoutTypeable sampleSize typeName proxy = do
@@ -91,6 +92,7 @@ testHashableCollision sampleSize typeName Proxy =
 
 
 -- $helperfunctions
+
 -- | filter a list by collecting all duplications of the second item of
 -- the tuple and return both elements of the tuple.
 dupsByMatchingSnd :: (Eq b) => [(a,b)] -> [(a,b)] -> [(a,b)]
@@ -101,3 +103,16 @@ dupsByMatchingSnd ys (x:xs) = newX ++ dupsByMatchingSnd (ys ++ [x]) xs
               then [x]
               else []
 dupsByMatchingSnd _  []     = []
+
+
+-- $introduction
+--
+-- For every 'Hashable' instance of a type, each unique value of that type
+-- should have a unique hash. Generally, a 'Generic' 'Hashable' instance of a type should
+-- create a unique hash, and ideally these match the rules of type's 'Eq'
+-- instance. Any values for that type that are equal should have the same hash
+-- and any values that are not equal should have unique hashes.
+-- There might still be cases where a 'Generic' 'Hashable' instance
+-- breaks those expectations. There are also cases where you might implement
+-- 'Hashable' by hand. This testing library assumes that you expect the
+-- uniqueness of a type matches in `Eq` and `Hashable`.
