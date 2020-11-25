@@ -44,7 +44,7 @@ testHashableUniqueness :: forall a. (Arbitrary a, Eq a, Hashable a, Show a, Type
   => Int -> Proxy a -> Spec
 testHashableUniqueness sampleSize proxy = do
   case sampleSize <= 0 of
-    True -> fail ("The sample size must be greater than zero. The sample size you provided is: " ++ show sampleSize ++ ".")
+    True -> error $ "The sample size must be greater than zero. The sample size you provided is: " ++ show sampleSize ++ "."
     False -> do
       testSelfEquality sampleSize typeName proxy
       testHashableCollision sampleSize typeName proxy
@@ -58,7 +58,7 @@ testHashableUniquenessWithoutTypeable :: forall a. (Arbitrary a, Eq a, Hashable 
   => Int -> String -> Proxy a -> Spec
 testHashableUniquenessWithoutTypeable sampleSize typeName proxy = do
   case sampleSize <= 0 of
-    True -> fail ("The sample size must be greater than zero. The sample size you provided is: " ++ show sampleSize ++ ".")
+    True -> error $ "The sample size must be greater than zero. The sample size you provided is: " ++ show sampleSize ++ "."
     False -> do
       testSelfEquality sampleSize typeName proxy
       testHashableCollision sampleSize typeName proxy
